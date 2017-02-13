@@ -248,6 +248,12 @@ FlashFactory::create(Samba& samba, uint32_t chipId)
         case 0x1001001c:
             flash = new NvmFlash( samba, "ATSAMR21E18A", 0x2000, 4096, 64, 1, 16, 0x20004000, 0x20008000, 0x41004000, true ) ;
             break;
+        //
+        // SAMC21
+        //
+        case 0x11010000:
+            flash = new NvmFlash( samba, "ATSAMC21J18A", 0x2000, 4096, 64, 1, 16, 0x20004000, 0x20008000, 0x41004000, true ) ;
+            break ;
         }
     }
     

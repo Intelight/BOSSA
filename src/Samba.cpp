@@ -185,6 +185,10 @@ Samba::init()
     {
         return true;
     }
+    else if (cid == 0x11010000)
+    {
+        return true;
+    }
     else
     {
         if (_debug)
@@ -668,6 +672,10 @@ Samba::reset(void)
     case 0x1001000a:
     case 0x1001001c:
         // http://infocenter.arm.com/help/index.jsp?topic=/com.arm.doc.ddi0484c/index.html
+        writeWord(0xE000ED0C, 0x05FA0004);
+        break;
+
+    case 0x11010000:
         writeWord(0xE000ED0C, 0x05FA0004);
         break;
 
