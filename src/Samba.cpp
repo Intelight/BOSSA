@@ -294,6 +294,8 @@ Samba::writeWord(uint32_t addr, uint32_t value)
     if (_port->write(cmd, sizeof(cmd) - 1) != sizeof(cmd) - 1)
         throw SambaError();
 
+    printf("cmd is %s\n", cmd);
+
     // The SAM firmware has a bug that if the command and binary data
     // are received in the same USB data packet, then the firmware
     // gets confused.  Even though the writes are sperated in the code,
@@ -671,12 +673,11 @@ Samba::reset(void)
     case 0x10010005:
     case 0x1001000a:
     case 0x1001001c:
+    case 0x11010000:
         // http://infocenter.arm.com/help/index.jsp?topic=/com.arm.doc.ddi0484c/index.html
         writeWord(0xE000ED0C, 0x05FA0004);
-        break;
-
-    case 0x11010000:
-        writeWord(0xE000ED0C, 0x05FA0004);
+        //  We need to pause before reading the serial port again for the reset to work?
+        usleep(50000);
         break;
 
     // SAM3X8E
