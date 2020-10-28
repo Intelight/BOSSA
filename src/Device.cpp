@@ -31,6 +31,7 @@
 #include "EefcFlash.h"
 #include "D2xNvmFlash.h"
 #include "D5xNvmFlash.h"
+#include <unistd.h>
 
 void
 Device::readChipId(uint32_t& chipId, uint32_t& extChipId)
@@ -425,6 +426,14 @@ Device::create()
         switch (deviceId & 0xffff00ff)
         {
         //
+        // SAMC20
+        //
+        case 0x11000000: //J18A
+            _family = FAMILY_SAMC20;
+            flashPtr = new D2xNvmFlash(_samba, "ATSAMC20x18", 4096, 64, 0x20004000, 0x20008000) ;
+            break ;
+
+        //
         // SAMD21
         //
         case 0x10010003: // J15A
@@ -638,6 +647,16 @@ Device::reset()
     {
         switch (_family)
         {
+        case FAMILY_SAMC20:
+            // The custom sam-ba bootloader for the NYC SAMC20 checks
+            // the reset cause and stays in bootloader mode if the
+            // cause is "system" (which is trigerd by the front panel
+            // firmware).  We need to reset with some other cause.
+            // Fortunately, writing anything other than an 0xA5 to 
+            // the WDT clear register triggers an immediate wdt reset.
+            _samba.writeByte(0x4000200C, 0xFF);
+            break;
+
         case FAMILY_SAMD21:
         case FAMILY_SAMR21:
         case FAMILY_SAML21:
